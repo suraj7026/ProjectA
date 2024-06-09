@@ -39,6 +39,7 @@ def get_data(name = 'academy:register'):
     retrieve_df[['Name','Roll']] = retrieve_df['Name_Roll'].apply(lambda x:x.split('@')).apply(pd.Series)
     return retrieve_df[['Name','Roll','Features']]
 
+
 # Search 
 
 def multiple_face_search(dataframe, feature_column, test_vector, threshold=0.4, name_role=['Name', 'Roll']):
@@ -88,5 +89,22 @@ def face_recognition(image,dataframe, feature_column, threshold=0.4, name_role=[
         cv2.putText(test_copy, text_gen, (x1, y2 + 20), cv2.FONT_HERSHEY_DUPLEX, 0.5, color, 1)
     return test_copy
 
-
+def face_recognition_upload_image(image, dataframe, feature_column, threshold=0.4, name_role=['Name', 'Roll']):
+    face_results = faceapp.get(image)
+    
+    names = []
+    rolls = []
+        
+    for r in face_results:
+        
+        embeddings = r['embedding']
+        name, role = multiple_face_search(dataframe, feature_column, test_vector=embeddings, name_role=name_role, threshold=0.5)
+            
+        if name != "Unknown":
+            names.append(name)
+            rolls.append(role)
+            
+       
+        
+    return names, rolls
     
